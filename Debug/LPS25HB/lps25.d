@@ -1,4 +1,5 @@
-Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
+LPS25HB/lps25.o: ../LPS25HB/lps25.c ../LPS25HB/lps25hb.h \
+ ../Core/Inc/main.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_ll_dma.h \
  ../Drivers/CMSIS/Device/ST/STM32F3xx/Include/stm32f3xx.h \
  ../Drivers/CMSIS/Device/ST/STM32F3xx/Include/stm32f303x8.h \
@@ -17,10 +18,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_ll_pwr.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_ll_usart.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_ll_gpio.h \
- ../Core/Inc/dma.h ../Core/Inc/main.h ../Core/Inc/i2c.h \
- ../Core/Inc/usart.h ../Core/Inc/gpio.h \
- D:/4\ rocnik/vnorene\ RS/workspace/vrs6/LPS25HB/lps25hb.h \
- D:/4\ rocnik/vnorene\ RS/workspace/vrs6/HTS221/hts221.h
+ ../Core/Inc/i2c.h ../Core/Inc/main.h
+../LPS25HB/lps25hb.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_ll_dma.h:
 ../Drivers/CMSIS/Device/ST/STM32F3xx/Include/stm32f3xx.h:
@@ -40,10 +39,5 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_ll_pwr.h:
 ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_ll_usart.h:
 ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_ll_gpio.h:
-../Core/Inc/dma.h:
-../Core/Inc/main.h:
 ../Core/Inc/i2c.h:
-../Core/Inc/usart.h:
-../Core/Inc/gpio.h:
-D:/4\ rocnik/vnorene\ RS/workspace/vrs6/LPS25HB/lps25hb.h:
-D:/4\ rocnik/vnorene\ RS/workspace/vrs6/HTS221/hts221.h:
+../Core/Inc/main.h:

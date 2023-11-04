@@ -1,0 +1,6 @@
+../HTS221/hts221.c:13:9:HTS221_read_byte	1
+../HTS221/hts221.c:20:6:HTS221_write_byte	1
+../HTS221/hts221.c:26:6:HTS221_read_array	1
+../HTS221/hts221.c:31:7:HTS221_get_temperature	1
+../HTS221/hts221.c:75:7:HTS221_get_humidity	1
+../HTS221/hts221.c:115:9:HTS221_Init	2
