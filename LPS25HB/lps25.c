@@ -6,6 +6,14 @@
  */
 
 #include "lps25hb.h"
+#include "hts221.h"
+#include "stdio.h"
+#include "string.h"
+#include <math.h>
+
+#define N_REF_SAMPLES 500
+#define PRESSURE_0 1013.25
+
 
 uint8_t lps25hb_address = LPS25HB_DEVICE_ADDRESS0;
 
@@ -37,6 +45,18 @@ float LPS25HB_get_pressure()
 	float pressure_real = ((pressure[2] * 65536) + (pressure[1] * 256) + pressure[0]) / 4096.0;
 
 	return pressure_real;
+}
+float LPS25HB_get_height()
+{
+
+	float pressure = LPS25HB_get_pressure();
+	float temperature_K = HTS221_get_temperature()+273.15;
+	float humidity = HTS221_get_humidity();
+	float tlakovy_gradient = 0.125*(1+(0.0065*(temperature_K-288.15))*(1+(0.0029*(humidity/100))));
+
+	float relativna_vyska = (PRESSURE_0-pressure) / tlakovy_gradient;
+
+	return relativna_vyska;
 }
 
 uint8_t LPS25HB_Init()

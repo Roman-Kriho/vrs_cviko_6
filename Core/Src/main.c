@@ -120,7 +120,9 @@ int main(void)
 
 		// Pressure
 		float pressure = LPS25HB_get_pressure();
-
+		//
+		float heigth = LPS25HB_get_height();
+//		float heigth = 11.2;
 
 		// Temperature
 		float temperature = HTS221_get_temperature();
@@ -139,7 +141,7 @@ int main(void)
 		float rel_height = ((press_pw - 1) * (temperature + 273.15)) / 0.0065;*/
 
 		// Format string
-		sprintf(message_pressure, "%7.3f, %3.1f, %d\r", pressure, temperature, (int) humidity);
+		sprintf(message_pressure, "%7.3f, %3.1f, %d,%3.2f\r", pressure, temperature, (int) humidity,heigth);
 		USART2_PutBuffer((uint8_t*) message_pressure, strlen(message_pressure));
 
 		// Delay
