@@ -50,3 +50,4 @@ void USART2_RegisterCallback(void *callback);
 
 #endif /* __USART_H__ */
 
+

@@ -58,149 +58,131 @@ float reference_pressure = 0.0;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-/* USER CODE BEGIN PFP */
 
-/* USER CODE END PFP */
 
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
+	/* USER CODE BEGIN 1 */
 
 
-  /* USER CODE END 1 */
+	/* USER CODE END 1 */
 
-  /* MCU Configuration--------------------------------------------------------*/
+	/* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
-  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
+	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
 
-  /* System interrupt init*/
-  NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+	/* System interrupt init*/
+	NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
-  /* SysTick_IRQn interrupt configuration */
-  NVIC_SetPriority(SysTick_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),15, 0));
+	/* USER CODE BEGIN Init */
 
-  /* Peripheral interrupt init*/
-  /* FPU_IRQn interrupt configuration */
-  NVIC_SetPriority(FPU_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
-  NVIC_EnableIRQ(FPU_IRQn);
+	/* USER CODE END Init */
 
-  /* USER CODE BEGIN Init */
+	/* Configure the system clock */
+	SystemClock_Config();
+	/* USER CODE BEGIN SysInit */
 
-  /* USER CODE END Init */
+	/* USER CODE END SysInit */
 
-  /* Configure the system clock */
-  SystemClock_Config();
+	/* Initialize all configured peripherals */
+	MX_GPIO_Init();
+	MX_I2C1_Init();
+	MX_DMA_Init();
+	MX_USART2_UART_Init();
+	/* USER CODE BEGIN 2 */
+//  lsm6ds0_init();
+	LPS25HB_Init();
+	HTS221_Init();
 
-  /* USER CODE BEGIN SysInit */
+	char message_pressure[128];
+	memset(message_pressure, 0, sizeof(message_pressure));
 
-  /* USER CODE END SysInit */
+	// Calculate reference pressure
+	for (int sample = 0; sample < N_REF_SAMPLES; sample++)
+	{
+		reference_pressure += LPS25HB_get_pressure();
+		LL_mDelay(40);
+	}
+	reference_pressure /= N_REF_SAMPLES;
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_I2C1_Init();
-  MX_USART2_UART_Init();
-  /* USER CODE BEGIN 2 */
-  HTS221_Init();
+	/* USER CODE END 2 */
 
-  LPS25HB_Init();
+	/* Infinite loop */
+	/* USER CODE BEGIN WHILE */
+	while (1)
+	{
+		/* USER CODE END WHILE */
 
-  	char message_pressure[128];
-  	memset(message_pressure, 0, sizeof(message_pressure));
+		/* USER CODE BEGIN 3 */
+		memset(message_pressure, '\0', sizeof(message_pressure));
 
-  	// Calculate reference pressure
-  	for (int sample = 0; sample < N_REF_SAMPLES; sample++)
-  	{
-  		reference_pressure += LPS25HB_get_pressure();
-  		LL_mDelay(40);
-  	}
-  	reference_pressure /= N_REF_SAMPLES;
-
-
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-	  memset(message_pressure, '\0', sizeof(message_pressure));
-
-	  		// Pressure
-	  		float pressure = LPS25HB_get_pressure();
+		// Pressure
+		float pressure = LPS25HB_get_pressure();
 
 
-	  		// Temperature
-	  		float temperature = HTS221_get_temperature();
+		// Temperature
+		float temperature = HTS221_get_temperature();
 
-	  		// Humidity
-	  		float humidity = HTS221_get_humidity();
+		// Humidity
+		float humidity = HTS221_get_humidity();
 
-	  		// Absolute height calculation
-	  //		float press_ratio = PRESSURE_0 / pressure;
-	  //		float press_pw = powf(press_ratio, (1 / 5.257));
-	  //		float abs_height = ((press_pw - 1) * (temperature + 273.15)) / 0.0065;
+/*		// Absolute height calculation
+//		float press_ratio = PRESSURE_0 / pressure;
+//		float press_pw = powf(press_ratio, (1 / 5.257));
+//		float abs_height = ((press_pw - 1) * (temperature + 273.15)) / 0.0065;
 
-	  		// Relative height calculation
-	  		/*float press_ratio = reference_pressure / filtered_pressure;
-	  		float press_pw = powf(press_ratio, (1 / 5.257));
-	  		float rel_height = ((press_pw - 1) * (temperature + 273.15)) / 0.0065;
-*/
-	  		// Format string
-	  		sprintf(message_pressure, "%7.3f, %3.1f, %d\r", pressure, temperature, (int) humidity);
-	  //		sprintf(message_pressure, "%7.3f,%7.3f\r", pressure, filtered_pressure);
-	  		USART2_PutBuffer((uint8_t*) message_pressure, strlen(message_pressure));
+		// Relative height calculation
+		float press_ratio = reference_pressure / filtered_pressure;
+		float press_pw = powf(press_ratio, (1 / 5.257));
+		float rel_height = ((press_pw - 1) * (temperature + 273.15)) / 0.0065;*/
 
-	  		// Delay
-	  		LL_mDelay(40);
-  }
-  /* USER CODE END 3 */
+		// Format string
+		sprintf(message_pressure, "%7.3f, %3.1f, %d\r", pressure, temperature, (int) humidity);
+		USART2_PutBuffer((uint8_t*) message_pressure, strlen(message_pressure));
+
+		// Delay
+		LL_mDelay(40);
+
+	}
+	  /* USER CODE END 3 */
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+ * @brief System Clock Configuration
+ * @retval None
+ */
 void SystemClock_Config(void)
 {
-  LL_FLASH_SetLatency(LL_FLASH_LATENCY_0);
-  while(LL_FLASH_GetLatency()!= LL_FLASH_LATENCY_0)
-  {
-  }
-  LL_RCC_HSI_Enable();
+	LL_FLASH_SetLatency(LL_FLASH_LATENCY_0);
 
-   /* Wait till HSI is ready */
-  while(LL_RCC_HSI_IsReady() != 1)
-  {
+	if (LL_FLASH_GetLatency() != LL_FLASH_LATENCY_0)
+	{
+		Error_Handler();
+	}
+	LL_RCC_HSI_Enable();
 
-  }
-  LL_RCC_HSI_SetCalibTrimming(16);
-  LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
-  LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
-  LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
-  LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSI);
+	/* Wait till HSI is ready */
+	while (LL_RCC_HSI_IsReady() != 1)
+	{
 
-   /* Wait till System clock is ready */
-  while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
-  {
+	}
+	LL_RCC_HSI_SetCalibTrimming(16);
+	LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
+	LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
+	LL_RCC_SetAPB2Prescaler(LL_RCC_APB1_DIV_1);
+	LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSI);
 
-  }
-  LL_Init1msTick(8000000);
-  LL_SetSystemCoreClock(8000000);
-  LL_RCC_SetI2CClockSource(LL_RCC_I2C1_CLKSOURCE_HSI);
+	/* Wait till System clock is ready */
+	while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
+	{
+
+	}
+	LL_Init1msTick(8000000);
+	LL_SYSTICK_SetClkSource(LL_SYSTICK_CLKSOURCE_HCLK);
+	LL_SetSystemCoreClock(8000000);
+	LL_RCC_SetI2CClockSource(LL_RCC_I2C1_CLKSOURCE_HSI);
 }
 
 /* USER CODE BEGIN 4 */
@@ -208,18 +190,18 @@ void SystemClock_Config(void)
 /* USER CODE END 4 */
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
 void Error_Handler(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
-  /* USER CODE END Error_Handler_Debug */
+	/* USER CODE BEGIN Error_Handler_Debug */
+	/* User can add his own implementation to report the HAL error return state */
+	__disable_irq();
+	while (1)
+	{
+	}
+	/* USER CODE END Error_Handler_Debug */
 }
 
 #ifdef  USE_FULL_ASSERT
@@ -230,11 +212,12 @@ void Error_Handler(void)
   * @param  line: assert_param error line source number
   * @retval None
   */
-void assert_failed(uint8_t *file, uint32_t line)
+void assert_failed(char *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+
