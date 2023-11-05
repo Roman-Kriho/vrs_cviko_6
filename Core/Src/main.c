@@ -39,8 +39,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define PRESSURE_0 1013.25
-#define N_REF_SAMPLES 500
 float reference_pressure = 0.0;
 
 /* USER CODE END PD */
@@ -92,20 +90,12 @@ int main(void)
 	MX_DMA_Init();
 	MX_USART2_UART_Init();
 	/* USER CODE BEGIN 2 */
-//  lsm6ds0_init();
+
 	LPS25HB_Init();
 	HTS221_Init();
 
-	char message_pressure[128];
-	memset(message_pressure, 0, sizeof(message_pressure));
-
-	// Calculate reference pressure
-	for (int sample = 0; sample < N_REF_SAMPLES; sample++)
-	{
-		reference_pressure += LPS25HB_get_pressure();
-		LL_mDelay(40);
-	}
-	reference_pressure /= N_REF_SAMPLES;
+	char message[128];
+	memset(message, 0, sizeof(message));
 
 	/* USER CODE END 2 */
 
@@ -116,13 +106,12 @@ int main(void)
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
-		memset(message_pressure, '\0', sizeof(message_pressure));
+		memset(message, '\0', sizeof(message));
 
 		// Pressure
 		float pressure = LPS25HB_get_pressure();
-		//
-		float heigth = LPS25HB_get_height();
-//		float heigth = 11.2;
+		// Height
+		float height = LPS25HB_get_height();
 
 		// Temperature
 		float temperature = HTS221_get_temperature();
@@ -130,19 +119,10 @@ int main(void)
 		// Humidity
 		float humidity = HTS221_get_humidity();
 
-/*		// Absolute height calculation
-//		float press_ratio = PRESSURE_0 / pressure;
-//		float press_pw = powf(press_ratio, (1 / 5.257));
-//		float abs_height = ((press_pw - 1) * (temperature + 273.15)) / 0.0065;
-
-		// Relative height calculation
-		float press_ratio = reference_pressure / filtered_pressure;
-		float press_pw = powf(press_ratio, (1 / 5.257));
-		float rel_height = ((press_pw - 1) * (temperature + 273.15)) / 0.0065;*/
 
 		// Format string
-		sprintf(message_pressure, "%7.3f, %3.1f, %d,%3.2f\r", pressure, temperature, (int) humidity,heigth);
-		USART2_PutBuffer((uint8_t*) message_pressure, strlen(message_pressure));
+		sprintf(message, "%7.3f, %3.1f, %d, %3.2f\r", pressure, temperature, (int) humidity, height);
+		USART2_PutBuffer((uint8_t*) message, strlen(message));
 
 		// Delay
 		LL_mDelay(40);

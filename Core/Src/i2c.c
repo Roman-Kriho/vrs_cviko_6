@@ -21,7 +21,7 @@
 #include "i2c.h"
 
 /* USER CODE BEGIN 0 */
-uint8_t *aReceiveBuffer_read , end_of_read_flag = 0;
+uint8_t *aReceiveBuffer_read = 0;
 volatile uint8_t ubReceiveIndex = 0;
 /* USER CODE END 0 */
 
@@ -104,8 +104,6 @@ uint8_t* i2c_master_read(uint8_t* buffer, uint8_t length, uint8_t register_addr,
 		register_addr |= (1 << 7);
 	}
 
-	end_of_read_flag = 0;
-
 	LL_I2C_EnableIT_RX(I2C1);
 
 	//poziadam slejva o citanie z jeho registra
@@ -131,7 +129,6 @@ uint8_t* i2c_master_read(uint8_t* buffer, uint8_t length, uint8_t register_addr,
 	LL_I2C_DisableIT_RX(I2C1);
 	I2C1->ICR |= (1 << 4);
 	ubReceiveIndex = 0;
-	end_of_read_flag = 1;
 
 	return aReceiveBuffer_read;
 }
@@ -144,8 +141,7 @@ void I2C1_EV_IRQHandler(void)
 	{
 		/* Call function Master Reception Callback */
 		aReceiveBuffer_read[ubReceiveIndex++] = LL_I2C_ReceiveData8(I2C1);
-		/*(ubReceiveIndex > 19) ? ubReceiveIndex = 0 : ubReceiveIndex;
-		end_of_read_flag = 0;*/
+
 	}
 }
 /* USER CODE END 1 */
