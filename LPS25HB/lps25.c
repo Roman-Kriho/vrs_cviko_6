@@ -11,7 +11,7 @@
 #include "string.h"
 #include <math.h>
 
-#define N_REF_SAMPLES 500
+
 #define PRESSURE_0 1013.25
 
 

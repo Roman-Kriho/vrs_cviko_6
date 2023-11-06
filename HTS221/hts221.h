@@ -7,35 +7,6 @@
 #include "main.h"
 #include "i2c.h"
 
-
-/*
-#define 	HTS221_DEVICE_ADDRESS					0xBF
-
-#define 	HTS221_WHO_AM_I_ADDRES					0x0F
-#define 	HTS221_WHO_AM_I_VALUE					0XBC
-
-#define 	HTS221_CTRL_REG1						0x20
-#define		HTS221_CTRL_REG2						0X21
-#define  	HTS221_CTRL_REG3						0X22
-
-#define 	HTS221_ADDRESS_TEMP_L					0x2A
-#define 	HTS221_ADDRESS_TEMP_H					0x2B
-#define 	HTS221_ADDRESS_HUM_L					0x28
-
-#define 	HTS_221_T0_DEGC_X8						0x32
-#define 	HTS_221_T1_DEGC_X8						0x33
-#define 	HTS_221_T1_T0MSB						0x35
-#define 	HTS_221_T0_OUT_3C						0x3C
-#define 	HTS_221_T0_OUT_3D						0x3D
-#define 	HTS_221_T1_OUT_3E						0x3E
-#define 	HTS_221_T1_OUT_3F						0x3F
-
-#define		HTS_221_H0_RH_X2						0x30
-#define		HTS_221_H1_RH_X2						0x31
-#define		HTS_221_H0_T0_OUT						0x36
-#define		HTS_221_H1_T0_OUT						0x3A
-
-*/
 #define HTS221_DEVICE_ADDRESS			0xBE
 
 #define HTS221_WHO_AM_I_ADDRESS			0x0F
@@ -69,14 +40,6 @@
 #define HTS221_H1_T0_OUT_H				0x3B
 
 
-/*uint8_t hts221_read_byte(uint8_t reg_addr);
-void hts221_read_array(uint8_t * data, uint8_t reg_addr, uint8_t length );
-//void hts221_write_byte(uint8_t reg_addr, uint8_t value);
-void hts221_write_byte(uint8_t data, uint8_t register_addr, uint8_t slave_addr);
-uint8_t hts221_init(void);
-
-float hts221_get_temperature();
-uint8_t hts221_get_humidity();*/
 uint8_t HTS221_Init();
 void HTS221_write_byte(uint8_t data, uint8_t register_addr, uint8_t slave_addr);
 uint8_t HTS221_read_byte(uint8_t reg_addr);
